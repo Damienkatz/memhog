@@ -17,10 +17,17 @@ int main(int argc, const char* argv[]) {
 		printf("Invalid argument %s, make sure to pass a base 10 or 16 integer (ex: 255 or 0xFF)\n", argv[1]);
 		return 1;
 	}
-	
-	printf("Hogging %li bytes of RAM. Press any key to kill me.\n", bytes_to_hog);
+	printf("Attempting to hog %li bytes of RAM.\n", bytes_to_hog);
  	mem = malloc(bytes_to_hog);
-	mlock(mem, bytes_to_hog);
+	if (!mem) {
+		printf("Failied! Couldn't malloc.\n");
+		return 1;
+	}
+	if (mlock(mem, bytes_to_hog)) {
+		printf("Failed! Couldn't mlock.\n");
+		return 1;
+	}
+	printf("Success! Press any key to kill me and get back the RAM.\n");
 	getchar();
 	return 0;
 }
